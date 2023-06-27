@@ -26,7 +26,7 @@
  */
 
 require('../../config.php');
-require_once($CFG->dirroot.'/mod/mplayer/lib.php');
+require_once($CFG->dirroot . '/mod/mplayer/lib.php');
 
 list($cm, $course, $mplayer) = mplayer_get_context();
 
@@ -65,7 +65,7 @@ $strmplayers = get_string('modulenameplural', 'mplayer');
 $strmplayer  = get_string('modulename', 'mplayer');
 $PAGE->set_title(format_string($mplayer->name));
 $PAGE->set_heading('');
-$PAGE->navbar->add(get_string('mplayer', 'mplayer').': '.$mplayer->name);
+$PAGE->navbar->add(get_string('mplayer', 'mplayer') . ': ' . $mplayer->name);
 $PAGE->set_focuscontrol('');
 $PAGE->set_cacheable(true);
 
@@ -75,7 +75,7 @@ if (mod_mplayer_supports_feature('assessables/highlightzones') && $mplayer->asse
 
 echo $OUTPUT->header();
 
-echo mplayer_require_js($mplayer, 'script');
+//echo mplayer_require_js($mplayer, 'script');
 
 $mplayer->instance = $cm->instance;
 

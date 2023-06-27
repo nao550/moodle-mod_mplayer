@@ -33,30 +33,31 @@ define('MPLAYER_ASSESS_MATCH_ZONES', 2);
 /**
  *
  */
-function mplayer_get_context() {
+function mplayer_get_context()
+{
     global $DB;
 
     $id = optional_param('id', 0, PARAM_INT); // Course Module ID, or.
     $a  = optional_param('a', 0, PARAM_INT); // Mplayer ID.
 
     if ($id) {
-        if (! $cm = $DB->get_record('course_modules', array('id' => $id))) {
+        if (!$cm = $DB->get_record('course_modules', array('id' => $id))) {
             print_error('invalidcoursemodule');
         }
-        if (! $course = $DB->get_record('course', array('id' => $cm->course))) {
+        if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
             print_error('coursemisconf');
         }
-        if (! $mplayer = $DB->get_record('mplayer', array('id' => $cm->instance))) {
+        if (!$mplayer = $DB->get_record('mplayer', array('id' => $cm->instance))) {
             print_error('invalidmplayerid', 'mplayer');
         }
     } else {
-        if (! $mplayer = $DB->get_record('mplayer', array('id' => $a))) {
+        if (!$mplayer = $DB->get_record('mplayer', array('id' => $a))) {
             print_error('invalidmplayerid', 'mplayer');
         }
-        if (! $course = $DB->get_record('course', array('id' => $mplayer->course))) {
+        if (!$course = $DB->get_record('course', array('id' => $mplayer->course))) {
             print_error('coursemisconf');
         }
-        if (! $cm = get_coursemodule_from_instance('mplayer', $mplayer->id, $course->id)) {
+        if (!$cm = get_coursemodule_from_instance('mplayer', $mplayer->id, $course->id)) {
             print_error('invalidcoursemodule');
         }
     }
@@ -71,7 +72,8 @@ function mplayer_get_context() {
  * @param objectref &$mplayer
  * @param string $filearea name of a filearea to process for saving
  */
-function mplayer_save_draft_file(&$mplayer, $filearea) {
+function mplayer_save_draft_file(&$mplayer, $filearea)
+{
     global $USER;
     static $fs;
 
@@ -115,7 +117,8 @@ function mplayer_save_draft_file(&$mplayer, $filearea) {
  * @param string $filearea name of a filearea to process for saving
  * @param object $context give the module context if already available on call. It will be reprocessed if not given.
  */
-function mplayer_get_file_location(&$mplayer, $filearea, $context = null) {
+function mplayer_get_file_location(&$mplayer, $filearea, $context = null)
+{
     global $CFG;
 
     $url = false;
@@ -132,9 +135,9 @@ function mplayer_get_file_location(&$mplayer, $filearea, $context = null) {
         if ($areafiles = $fs->get_area_files($context->id, 'mod_mplayer', $filearea, 0)) {
             $storedfile = array_pop($areafiles);
             $contenthash = $storedfile->get_contenthash();
-            $l1 = $contenthash[0].$contenthash[1];
-            $l2 = $contenthash[2].$contenthash[3];
-            return $CFG->dataroot.'/filedir/'.$l1.'/'.$l2.'/'.$contenthash;
+            $l1 = $contenthash[0] . $contenthash[1];
+            $l2 = $contenthash[2] . $contenthash[3];
+            return $CFG->dataroot . '/filedir/' . $l1 . '/' . $l2 . '/' . $contenthash;
         }
     }
     return false;
@@ -146,7 +149,8 @@ function mplayer_get_file_location(&$mplayer, $filearea, $context = null) {
  * @return a local temp location of the file.
  */
 
-function mplayer_load_remote_file($mplayer, $url, $context) {
+function mplayer_load_remote_file($mplayer, $url, $context)
+{
 
     $ch = curl_init($url);
 
@@ -171,7 +175,7 @@ function mplayer_load_remote_file($mplayer, $url, $context) {
     // Check HTTP error code.
     $info = curl_getinfo($ch);
     if (!empty($info['http_code']) and ($info['http_code'] != 200)) {
-        debugging("Request for $uri failed with HTTP code ".$info['http_code']);
+        debugging("Request for $uri failed with HTTP code " . $info['http_code']);
         return;
     } else {
         $fs = get_file_storage();
@@ -195,7 +199,8 @@ function mplayer_load_remote_file($mplayer, $url, $context) {
  * @param boolean $array if true, gives the URL table of all files found in this area, if false, gives the first available file.
  * @return mixed, array or single URL as string
  */
-function mplayer_get_file_url(&$mplayer, $filearea, $context = null, $path = '/', $array = false) {
+function mplayer_get_file_url(&$mplayer, $filearea, $context = null, $path = '/', $array = false)
+{
     global $CFG;
 
     $url = false;
@@ -214,14 +219,14 @@ function mplayer_get_file_url(&$mplayer, $filearea, $context = null, $path = '/'
             if ($array) {
                 $url = array();
                 foreach ($areafiles as $storedfile) {
-                    $linkurl = $CFG->wwwroot.'/pluginfile.php/'.$context->id.'/mod_mplayer/'.$filearea.'/0';
-                    $linkurl .= $storedfile->get_filepath().$storedfile->get_filename();
+                    $linkurl = $CFG->wwwroot . '/pluginfile.php/' . $context->id . '/mod_mplayer/' . $filearea . '/0';
+                    $linkurl .= $storedfile->get_filepath() . $storedfile->get_filename();
                     $url[] = $linkurl;
                 }
             } else {
                 $storedfile = array_pop($areafiles);
-                $url = $CFG->wwwroot.'/pluginfile.php/'.$context->id.'/mod_mplayer/'.$filearea.'/0';
-                $url .= $storedfile->get_filepath().$storedfile->get_filename();
+                $url = $CFG->wwwroot . '/pluginfile.php/' . $context->id . '/mod_mplayer/' . $filearea . '/0';
+                $url .= $storedfile->get_filepath() . $storedfile->get_filename();
             }
         }
     }
@@ -235,7 +240,8 @@ function mplayer_get_file_url(&$mplayer, $filearea, $context = null, $path = '/'
  * @param object $context
  * @return an array of arrays as source definitions per clip
  */
-function mplayer_get_clips(&$mplayer, $context) {
+function mplayer_get_clips(&$mplayer, $context)
+{
 
     if (empty($mplayer->clipscache)) {
 
@@ -248,54 +254,54 @@ function mplayer_get_clips(&$mplayer, $context) {
         switch ($mplayer->type) {
             case 'xml':
             case 'xmlrtmp': {
-                // The playlist file has been uploaded.
-                $cm = get_coursemodule_from_instance('mplayer', $mplayer->id);
-                $context = context_module::instance($cm->id);
-                if (($playlistfile = mplayer_get_file_location($mplayer, 'playlistfiles', $context, '/playlist/'))) {
-                    $clips = mplayer_xml_playlist($mplayer, $playlistfile);
+                    // The playlist file has been uploaded.
+                    $cm = get_coursemodule_from_instance('mplayer', $mplayer->id);
+                    $context = context_module::instance($cm->id);
+                    if (($playlistfile = mplayer_get_file_location($mplayer, 'playlistfiles', $context, '/playlist/'))) {
+                        $clips = mplayer_xml_playlist($mplayer, $playlistfile);
+                    }
+                    break;
                 }
-                break;
-            }
 
             case 'httpxml':
             case 'httpxmlrtmp': {
-                /* The playlist file is obtained from an external URL and stored into a special filearea.
+                    /* The playlist file is obtained from an external URL and stored into a special filearea.
                  * this filearea is NOT backuped and reloaded each time the media is accessed.
                  * TODO : Possibly add a hold time of the playlist.
                  *
                  * In RTMP case, the play list should contain stream references
                  */
-                mplayer_load_remote_file($mplayer->external);
-                $playlistfile = mplayer_get_file_location($mplayer, 'remoteplaylist', $context);
-                $clips = mplayer_xml_playlist($mplayer, $playlistfile);
-                break;
-            }
+                    mplayer_load_remote_file($mplayer->external);
+                    $playlistfile = mplayer_get_file_location($mplayer, 'remoteplaylist', $context);
+                    $clips = mplayer_xml_playlist($mplayer, $playlistfile);
+                    break;
+                }
 
             case 'rtmp':
             case 'video': {
-                /* Video stores files into moodle filestore directly, with eventual thumbs
+                    /* Video stores files into moodle filestore directly, with eventual thumbs
                  * In RTMP case sources can be :
                  * - local rtmp proxies stored into the local storage (.stm files)
                  */
-                $clips = mplayer_get_clips_from_files($mplayer);
-                break;
-            }
+                    $clips = mplayer_get_clips_from_files($mplayer);
+                    break;
+                }
 
             case 'url':
             case 'youtube': {
-                // In that case, one clip per URL. No alternate sources possible.
-                if (!empty($mplayer->external)) {
-                    $sources = explode(';', $mplayer->external);
-                    $ix = 0;
-                    foreach ($sources as $source) {
-                        $clip = new StdClass();
-                        $clip->sources[] = $source;
-                        $clips[$ix] = $clip;
-                        $ix++;
+                    // In that case, one clip per URL. No alternate sources possible.
+                    if (!empty($mplayer->external)) {
+                        $sources = explode(';', $mplayer->external);
+                        $ix = 0;
+                        foreach ($sources as $source) {
+                            $clip = new StdClass();
+                            $clip->sources[] = $source;
+                            $clips[$ix] = $clip;
+                            $ix++;
+                        }
                     }
+                    break;
                 }
-                break;
-            }
 
             default:
                 $mplayer->clipscache = null;
@@ -319,7 +325,8 @@ function mplayer_get_clips(&$mplayer, $context) {
  * @param boolean $array if true, gives the URL table of all files found in this area, if false, gives the first available file.
  * @return mixed, array or single URL as string
  */
-function mplayer_get_clips_from_files(&$mplayer) {
+function mplayer_get_clips_from_files(&$mplayer)
+{
     global $CFG;
 
     $cm = get_coursemodule_from_instance('mplayer', $mplayer->id);
@@ -352,9 +359,9 @@ function mplayer_get_clips_from_files(&$mplayer) {
                     }
 
                     $contenthash = $storedfile->get_contenthash();
-                    $l1 = $contenthash[0].$contenthash[1];
-                    $l2 = $contenthash[2].$contenthash[3];
-                    $physicallocation = $CFG->dataroot.'/filedir/'.$l1.'/'.$l2.'/'.$contenthash;
+                    $l1 = $contenthash[0] . $contenthash[1];
+                    $l2 = $contenthash[2] . $contenthash[3];
+                    $physicallocation = $CFG->dataroot . '/filedir/' . $l1 . '/' . $l2 . '/' . $contenthash;
 
                     if (preg_match('/\.stm$/', $filename)) {
                         // This is a stream manifest. Get url from it.
@@ -368,7 +375,7 @@ function mplayer_get_clips_from_files(&$mplayer) {
                         if (!empty($streamedobj->clip)) {
                             $ix = $streamedobj->clip;
                         }
-                        $url = ''.$streamedobj->stream;
+                        $url = '' . $streamedobj->stream;
                         $duration = -1; // unkown;
                     } else {
                         // Normal local case.
@@ -395,8 +402,16 @@ function mplayer_get_clips_from_files(&$mplayer) {
 
             if ($mplayer->playlist == 'thumbs') {
                 // Get thumbs and fill clip array with.
-                if ($thumbfiles = $fs->get_directory_files($context->id, 'mod_mplayer', 'mplayerfiles', 0, '/thumbs/', true, false,
-                                                           'filepath, filename')) {
+                if ($thumbfiles = $fs->get_directory_files(
+                    $context->id,
+                    'mod_mplayer',
+                    'mplayerfiles',
+                    0,
+                    '/thumbs/',
+                    true,
+                    false,
+                    'filepath, filename'
+                )) {
                     if (count($areafiles) > 0) {
                         // If we do have some media files.
                         foreach ($thumbfiles as $storedfile) {
@@ -418,9 +433,14 @@ function mplayer_get_clips_from_files(&$mplayer) {
                                 continue;
                             }
                             if (array_key_exists($ix, $clips)) {
-                                $clips[$ix]->thumb = moodle_url::make_pluginfile_url($context->id, 'mod_mplayer', 'mplayerfiles', 0,
-                                                                                     $storedfile->get_filepath(),
-                                                                                     $storedfile->get_filename());
+                                $clips[$ix]->thumb = moodle_url::make_pluginfile_url(
+                                    $context->id,
+                                    'mod_mplayer',
+                                    'mplayerfiles',
+                                    0,
+                                    $storedfile->get_filepath(),
+                                    $storedfile->get_filename()
+                                );
                             }
                         }
                     }
@@ -430,8 +450,16 @@ function mplayer_get_clips_from_files(&$mplayer) {
     }
 
     // Open captions file and get clip titles from caption. there should be only one file.
-    if ($captionfiles = $fs->get_directory_files($context->id, 'mod_mplayer', 'mplayerfiles', 0, '/captions/', true, false,
-                                                 'filepath, filename')) {
+    if ($captionfiles = $fs->get_directory_files(
+        $context->id,
+        'mod_mplayer',
+        'mplayerfiles',
+        0,
+        '/captions/',
+        true,
+        false,
+        'filepath, filename'
+    )) {
         $captionfile = array_pop($captionfiles);
         $captions = $captionfile->get_content();
         $titlearray = explode("\n", $captions);
@@ -450,25 +478,26 @@ function mplayer_get_clips_from_files(&$mplayer) {
 /**
  * Get the internal "clips" model for jwplayer.
  */
-function jwplayer_get_clips(&$mplayer, $context) {
+function jwplayer_get_clips(&$mplayer, $context)
+{
     switch ($mplayer->type) {
 
         case 'video':
         case 'sound': {
-            $urlarray = mplayer_get_file_url($mplayer, 'mplayerfiles', $context, '/medias/0/', true);
-            break;
-        }
+                $urlarray = mplayer_get_file_url($mplayer, 'mplayerfiles', $context, '/medias/0/', true);
+                break;
+            }
 
         case 'url': {
-            // $urlarray = explode(';', ' ;' . $mplayer->external);
-            $urlarray = explode(';', $mplayer->external);
-            break;
-        }
+                // $urlarray = explode(';', ' ;' . $mplayer->external);
+                $urlarray = explode(';', $mplayer->external);
+                break;
+            }
 
         case 'youtube': {
-            $urlarray = explode(';', $mplayer->external);
-            break;
-        }
+                $urlarray = explode(';', $mplayer->external);
+                break;
+            }
 
         default:
             $urlarray = array();
@@ -498,7 +527,8 @@ function jwplayer_get_clips(&$mplayer, $context) {
  * @param objectref &$mplayer the mplayer instance
  * @param string $playlistfile the path of a file inthe file system from where to read XML
  */
-function mplayer_xml_playlist(&$mplayer, $playlistfile) {
+function mplayer_xml_playlist(&$mplayer, $playlistfile)
+{
 
     $playlistobj = simplexml_load_file($playlistfile);
 
@@ -522,7 +552,7 @@ function mplayer_xml_playlist(&$mplayer, $playlistfile) {
         $listitemcontent = '';
         if ($mplayer->playlist == 'thumbs') {
             if (isset($videoinfo->thumb)) {
-                $clip->thumb = ''.$videoinfo->thumb;
+                $clip->thumb = '' . $videoinfo->thumb;
             }
         } else if ($mplayer->playlist == 'dots') {
             // Let have thumbs, but let the CSS to the trick.
@@ -543,7 +573,7 @@ function mplayer_xml_playlist(&$mplayer, $playlistfile) {
         $ix++;
     }
 
-    return($clips);
+    return ($clips);
 }
 
 /**
@@ -551,7 +581,8 @@ function mplayer_xml_playlist(&$mplayer, $playlistfile) {
  * @param objectref &$mplayer the mplayer instance
  * @param string $filearea the filearea name.
  */
-function mplayer_clear_area(&$mplayer, $filearea, $context = null) {
+function mplayer_clear_area(&$mplayer, $filearea, $context = null)
+{
 
     if ($context->contextlevel != CONTEXT_MODULE || $context->instance != $mplayer->id) {
         throw new CodingException('Context does not match given mplayer instance.');
@@ -574,7 +605,8 @@ function mplayer_clear_area(&$mplayer, $filearea, $context = null) {
  * @param string $mode 'require' or 'script'.
  * @return void if require, script tag
  */
-function mplayer_require_js($mplayer, $mode) {
+function mplayer_require_js($mplayer, $mode)
+{
     global $PAGE, $CFG;
     static $jsloaded = false;
 
@@ -624,24 +656,24 @@ function mplayer_require_js($mplayer, $mode) {
                 $jsfragment = '<script src="//cdn.flowplayer.com/releases/native/stable/flowplayer.min.js" type="text/javascript"></script>';
                 $jsfragment .= '<script src="//cdn.flowplayer.com/releases/native/stable/plugins/playlist.min.js" type="text/javascript"></script>';
                 $jsfragment .= '<script src="//cdn.flowplayer.com/releases/native/stable/plugins/cuepoints.min.js" type="text/javascript"></script>';
-                $jsfragment .= '<script src="'.$CFG->wwwroot.$flowplayercuejscode.'" type="text/javascript"></script>';
-                $jsfragment .= '<script src="'.$CFG->wwwroot.$flowplayerjswrapper.'" type="text/javascript"></script>';
-                $cssfragment = '<link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.$flowplayercss.'">';
-                return $jsfragment.$cssfragment;
+                $jsfragment .= '<script src="' . $CFG->wwwroot . $flowplayercuejscode . '" type="text/javascript"></script>';
+                $jsfragment .= '<script src="' . $CFG->wwwroot . $flowplayerjswrapper . '" type="text/javascript"></script>';
+                $cssfragment = '<link rel="stylesheet" type="text/css" href="' . $CFG->wwwroot . $flowplayercss . '">';
+                return $jsfragment . $cssfragment;
             }
             $jsloaded[$mplayer->technology] = true;
-            $jsfragment = '<script src="'.$CFG->wwwroot.$jsplayerfile.'" type="text/javascript"></script>';
-            $jsfragment .= '<script src="'.$CFG->wwwroot.$completionfile.'" type="text/javascript"></script>';
+            $jsfragment = '<script src="' . $CFG->wwwroot . $jsplayerfile . '" type="text/javascript"></script>';
+            $jsfragment .= '<script src="' . $CFG->wwwroot . $completionfile . '" type="text/javascript"></script>';
             $cssfragment = '';
             if ($mplayer->technology == 'flowplayer') {
                 if (isset($jsplayerplaylistfile)) {
-                    $jsfragment .= '<script src="'.$CFG->wwwroot.$jsplayerplaylistfile.'" type="text/javascript"></script>';
+                    $jsfragment .= '<script src="' . $CFG->wwwroot . $jsplayerplaylistfile . '" type="text/javascript"></script>';
                 }
-                $jsfragment .= '<script src="'.$CFG->wwwroot.$flowplayercuejscode.'" type="text/javascript"></script>';
-                $jsfragment .= '<script src="'.$CFG->wwwroot.$flowplayerjswrapper.'" type="text/javascript"></script>';
-                $cssfragment .= '<link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.$flowplayercss.'">';
+                $jsfragment .= '<script src="' . $CFG->wwwroot . $flowplayercuejscode . '" type="text/javascript"></script>';
+                $jsfragment .= '<script src="' . $CFG->wwwroot . $flowplayerjswrapper . '" type="text/javascript"></script>';
+                $cssfragment .= '<link rel="stylesheet" type="text/css" href="' . $CFG->wwwroot . $flowplayercss . '">';
             }
-            return $jsfragment.$cssfragment;
+            return $jsfragment . $cssfragment;
         }
     }
 }
@@ -649,9 +681,12 @@ function mplayer_require_js($mplayer, $mode) {
 /**
  * Get all file areas used in module
  */
-function mplayer_get_fileareas() {
-    return array('mplayerfiles', 'configxml', 'audiodescriptionfile', 'captionsfile', 'hdfile', 'livestreamfile',
-                 'livestreamimagefile', 'logoboxfile', 'logofile');
+function mplayer_get_fileareas()
+{
+    return array(
+        'mplayerfiles', 'configxml', 'audiodescriptionfile', 'captionsfile', 'hdfile', 'livestreamfile',
+        'livestreamimagefile', 'logoboxfile', 'logofile'
+    );
 }
 
 /**
@@ -661,14 +696,15 @@ function mplayer_get_fileareas() {
  * @param $mplayer (mdl_mplayer DB record for current mplayer module instance)
  * @return string
  */
-function mplayer_print_header_js($mplayer) {
+function mplayer_print_header_js($mplayer)
+{
     global $CFG;
 
     // Build Javascript code for view.php print_header() function.
 
-    $js = '<script type="text/javascript" src="'.$CFG->wwwroot.'/mod/mplayer/extralib/players/swfobject/swfobject.js"></script>';
+    $js = '<script type="text/javascript" src="' . $CFG->wwwroot . '/mod/mplayer/extralib/players/swfobject/swfobject.js"></script>';
     $js .= '    <script type="text/javascript">';
-    $js .= '        swfobject.registerObject("jwPlayer", "'.$mplayer->fpversion.'");';
+    $js .= '        swfobject.registerObject("jwPlayer", "' . $mplayer->fpversion . '");';
     $js .= '    </script>';
     $js .= '// Don\'t show default dotted outline around Flash Player window in Firefox 3.';
     $js .= '<style type="text/css" media="screen">';
@@ -684,26 +720,33 @@ function mplayer_print_header_js($mplayer) {
  * true/false options
  * @return array
  */
-function mplayer_list_truefalse() {
-    return array('true' => get_string('yes'),
-                 'false' => get_string('no'));
+function mplayer_list_truefalse()
+{
+    return array(
+        'true' => get_string('yes'),
+        'false' => get_string('no')
+    );
 }
 
 /**
  * true/false options
  * @return array
  */
-function mplayer_list_quality() {
-    return array('best' => get_string('best', 'mplayer'),
-                 'high' => get_string('high', 'mplayer'),
-                 'medium' => get_string('medium', 'mplayer'),
-                 'autohigh' => get_string('autohigh', 'mplayer'),
-                 'autolow' => get_string('autolow', 'mplayer'),
-                 'low' => get_string('low', 'mplayer'));
+function mplayer_list_quality()
+{
+    return array(
+        'best' => get_string('best', 'mplayer'),
+        'high' => get_string('high', 'mplayer'),
+        'medium' => get_string('medium', 'mplayer'),
+        'autohigh' => get_string('autohigh', 'mplayer'),
+        'autolow' => get_string('autolow', 'mplayer'),
+        'low' => get_string('low', 'mplayer')
+    );
 }
 
 
-function mplayer_list_showpasspoints() {
+function mplayer_list_showpasspoints()
+{
     $showoptions = array(
         '0' => get_string('hidetracking', 'mplayer'),
         '1' => get_string('showall', 'mplayer'),
@@ -717,45 +760,55 @@ function mplayer_list_showpasspoints() {
  * Define target of link when user clicks on 'link' button
  * @return array
  */
-function mplayer_list_linktarget() {
-    return array('_blank' => get_string('newwindow', 'mplayer'),
-                 '_self' => get_string('samepage', 'mplayer'),
-                 'none' => get_string('none', 'mplayer'));
+function mplayer_list_linktarget()
+{
+    return array(
+        '_blank' => get_string('newwindow', 'mplayer'),
+        '_self' => get_string('samepage', 'mplayer'),
+        'none' => get_string('none', 'mplayer')
+    );
 }
 
 /**
  * Define type of media to serve
  * @return array
  */
-function mplayer_list_type($technology) {
+function mplayer_list_type($technology)
+{
 
     if (in_array($technology, array('jw712', 'jw611'))) {
-        return array('video' => get_string('video', 'mplayer'),
-                     'youtube' => get_string('youtube', 'mplayer'),
-                     'url' => get_string('fullurl', 'mplayer'),
-                     'xml' => get_string('xmlplaylist', 'mplayer'),
-                     'sound' => get_string('sound', 'mplayer'),
-                     'image' => get_string('stillimage', 'mplayer'),
-                     'http' => get_string('httppseudostreaming', 'mplayer'),
-                     'lighttpd' => get_string('lighthttpdstreaming', 'mplayer'),
-                     'rtmp' => get_string('rtmpstreaming', 'mplayer'));
+        return array(
+            'video' => get_string('video', 'mplayer'),
+            'youtube' => get_string('youtube', 'mplayer'),
+            'url' => get_string('fullurl', 'mplayer'),
+            'xml' => get_string('xmlplaylist', 'mplayer'),
+            'sound' => get_string('sound', 'mplayer'),
+            'image' => get_string('stillimage', 'mplayer'),
+            'http' => get_string('httppseudostreaming', 'mplayer'),
+            'lighttpd' => get_string('lighthttpdstreaming', 'mplayer'),
+            'rtmp' => get_string('rtmpstreaming', 'mplayer')
+        );
     } else if ($technology == 'jw') {
         // No more support for youtube nor RTMP.
-        return array('video' => get_string('video', 'mplayer'),
-                     'url' => get_string('fullurl', 'mplayer'),
-                     'xml' => get_string('xmlplaylist', 'mplayer'),
-                     'sound' => get_string('sound', 'mplayer'),
-                     'image' => get_string('stillimage', 'mplayer'),
-                     'http' => get_string('httppseudostreaming', 'mplayer'),
-                     'lighttpd' => get_string('lighthttpdstreaming', 'mplayer'));
+        return array(
+            'video' => get_string('video', 'mplayer'),
+            'url' => get_string('fullurl', 'mplayer'),
+            'xml' => get_string('xmlplaylist', 'mplayer'),
+            'sound' => get_string('sound', 'mplayer'),
+            'image' => get_string('stillimage', 'mplayer'),
+            'http' => get_string('httppseudostreaming', 'mplayer'),
+            'lighttpd' => get_string('lighthttpdstreaming', 'mplayer')
+        );
     } else {
-        return array('video' => get_string('video', 'mplayer'),
-                     'url' => get_string('fullurl', 'mplayer'),
-                     'xml' => get_string('xmlplaylist', 'mplayer'),
-                     'httpxml' => get_string('httpxmlplaylist', 'mplayer'),
-                     'xmlrtmp' => get_string('rtmpxmlplaylist', 'mplayer'),
-                     'xmlhttprtmp' => get_string('rtmphttpxmlplaylist', 'mplayer'),
-                     'rtmp' => get_string('rtmpstreaming', 'mplayer'));
+        return array(
+            'video' => get_string('video', 'mplayer'),
+            'url' => get_string('fullurl', 'mplayer'),
+            'xml' => get_string('xmlplaylist', 'mplayer'),
+            'httpxml' => get_string('httpxmlplaylist', 'mplayer'),
+            'xmlrtmp' => get_string('rtmpxmlplaylist', 'mplayer'),
+            'xmlhttprtmp' => get_string('rtmphttpxmlplaylist', 'mplayer'),
+            'rtmp' => get_string('rtmpstreaming', 'mplayer')
+        );
     }
 }
 
@@ -763,14 +816,15 @@ function mplayer_list_type($technology) {
  * Define available technologies. We keep 6.11 for reference.
  * @return array
  */
-function mplayer_list_technologies() {
+function mplayer_list_technologies()
+{
 
     return array(
         'flowplayer' => 'Flowplayer 7',
         'flowplayer8' => 'Flowplayer 8 (Using flowplayer CDN - Non free - Experimental)',
         'jw' => 'JW Player 8.0',
         'jw712' => 'JW Player 7.12 (Youtube compatible)',
-                 /* 'jw611' => 'JW Player 6.11 (Youtube compatible)' */
+        /* 'jw611' => 'JW Player 6.11 (Youtube compatible)' */
     );
 }
 
@@ -778,9 +832,11 @@ function mplayer_list_technologies() {
  * Define available possibilities for subtitle behaviour
  * @return array
  */
-function mplayer_list_langchoiceoptions() {
+function mplayer_list_langchoiceoptions()
+{
 
-    return array(0 => get_string('langcourse', 'mplayer'),
+    return array(
+        0 => get_string('langcourse', 'mplayer'),
         1 => get_string('languser', 'mplayer'),
         2 => get_string('langfreechoice', 'mplayer'),
         3 => get_string('langteacherchoice', 'mplayer'),
@@ -791,7 +847,8 @@ function mplayer_list_langchoiceoptions() {
  * Define available possibilities for subtitle behaviour
  * @return array
  */
-function mplayer_list_availablelangoptions() {
+function mplayer_list_availablelangoptions()
+{
 
     /*
      * This is a first approach that takes only activated languages in Moodle. Other languages
@@ -816,13 +873,16 @@ function mplayer_list_availablelangoptions() {
  * Remember not to include the ".mplayer" file extensions in video file names when using RTMP.
  * @return array
  */
-function mplayer_list_streamer() {
+function mplayer_list_streamer()
+{
 
     $config = get_config('mplayer');
 
-    return array('' => get_string('none', 'mplayer'),
-                 'http' => get_string('apacheh264', 'mplayer'),
-                 'wowza' => get_string('wowza', 'mplayer'));
+    return array(
+        '' => get_string('none', 'mplayer'),
+        'http' => get_string('apacheh264', 'mplayer'),
+        'wowza' => get_string('wowza', 'mplayer')
+    );
 }
 
 /**
@@ -830,10 +890,13 @@ function mplayer_list_streamer() {
  * None are provided as yet.
  * @return array
  */
-function mplayer_list_searchbarscript() {
+function mplayer_list_searchbarscript()
+{
 
-    return array('' => get_string('none', 'mplayer'),
-                 'http://gdata.youtube.com/feeds/api/videos?vq=QUERY&format=5' => get_string('youtubesearch', 'mplayer'));
+    return array(
+        '' => get_string('none', 'mplayer'),
+        'http://gdata.youtube.com/feeds/api/videos?vq=QUERY&format=5' => get_string('youtubesearch', 'mplayer')
+    );
 }
 
 /**
@@ -841,11 +904,13 @@ function mplayer_list_searchbarscript() {
  * None are provided as yet.
  * @return array
  */
-function mplayer_list_snapshotscript() {
+function mplayer_list_snapshotscript()
+{
     global $CFG;
 
-    return array('none' => 'none',
-                 $CFG->wwwroot.'/mod/mplayer/scripts/snapshot.php' => 'Demo Snapshot Script'
+    return array(
+        'none' => 'none',
+        $CFG->wwwroot . '/mod/mplayer/scripts/snapshot.php' => 'Demo Snapshot Script'
     );
 }
 
@@ -853,85 +918,109 @@ function mplayer_list_snapshotscript() {
  * Define position of player control bar
  * @return array
  */
-function mplayer_list_controlbar() {
-    return array('bottom' => get_string('bottom', 'mplayer'),
-                 'over' => get_string('over', 'mplayer'),
-                 'none' => get_string('none', 'mplayer'));
+function mplayer_list_controlbar()
+{
+    return array(
+        'bottom' => get_string('bottom', 'mplayer'),
+        'over' => get_string('over', 'mplayer'),
+        'none' => get_string('none', 'mplayer')
+    );
 }
 
 /**
  * Define position of playlist (JWPlayer only)
  * @return array
  */
-function mplayer_list_playlistposition() {
-    return array('bottom' => get_string('bottom', 'mplayer'),
-                 'right' => get_string('right', 'mplayer'),
-                 'over' => get_string('over', 'mplayer'),
-                 'none' => get_string('none', 'mplayer'));
+function mplayer_list_playlistposition()
+{
+    return array(
+        'bottom' => get_string('bottom', 'mplayer'),
+        'right' => get_string('right', 'mplayer'),
+        'over' => get_string('over', 'mplayer'),
+        'none' => get_string('none', 'mplayer')
+    );
 }
 
 /**
  * Define position of playlist (Flowplayer only)
  * @return array
  */
-function mplayer_list_playliststyles() {
-    return array('' => get_string('none', 'mplayer'),
-                 'dots' => get_string('dots', 'mplayer'),
-                 'thumbs' => get_string('thumbs', 'mplayer'));
+function mplayer_list_playliststyles()
+{
+    return array(
+        '' => get_string('none', 'mplayer'),
+        'dots' => get_string('dots', 'mplayer'),
+        'thumbs' => get_string('thumbs', 'mplayer')
+    );
 }
 
 /**
  * Define position of infobox
  * @return array
  */
-function mplayer_list_infoboxposition() {
-    return array('none' => get_string('none', 'mplayer'),
-                 'bottom' => get_string('bottom', 'mplayer'),
-                 'over' => get_string('over', 'mplayer'),
-                 'top' => get_string('top', 'mplayer'));
+function mplayer_list_infoboxposition()
+{
+    return array(
+        'none' => get_string('none', 'mplayer'),
+        'bottom' => get_string('bottom', 'mplayer'),
+        'over' => get_string('over', 'mplayer'),
+        'top' => get_string('top', 'mplayer')
+    );
 }
 
 /**
  * Define logobox align
  * @return array
  */
-function mplayer_list_logoboxalign() {
-    return array('left' => get_string('left', 'mplayer'),
-                 'right' => get_string('right', 'mplayer'));
+function mplayer_list_logoboxalign()
+{
+    return array(
+        'left' => get_string('left', 'mplayer'),
+        'right' => get_string('right', 'mplayer')
+    );
 }
 
 /**
  * Define position of metaviewer (JW Player only)
  * @return array
  */
-function mplayer_list_metaviewerposition() {
-    return array('' => get_string('none', 'mplayer'),
-                 'over' => get_string('over', 'mplayer'),
-                 'left' => get_string('left', 'mplayer'),
-                 'right' => get_string('right', 'mplayer'),
-                 'top' => get_string('top', 'mplayer'),
-                 'bottom' => get_string('bottom', 'mplayer'));
+function mplayer_list_metaviewerposition()
+{
+    return array(
+        '' => get_string('none', 'mplayer'),
+        'over' => get_string('over', 'mplayer'),
+        'left' => get_string('left', 'mplayer'),
+        'right' => get_string('right', 'mplayer'),
+        'top' => get_string('top', 'mplayer'),
+        'bottom' => get_string('bottom', 'mplayer')
+    );
 }
 
 /**
  * Define position of searchbar (JW Player)
  * @return array
  */
-function mplayer_list_searchbarposition() {
-    return array('none' => get_string('none', 'mplayer'),
-                 'top' => get_string('top', 'mplayer'),
-                 'bottom' => get_string('bottom', 'mplayer'));
+function mplayer_list_searchbarposition()
+{
+    return array(
+        'none' => get_string('none', 'mplayer'),
+        'top' => get_string('top', 'mplayer'),
+        'bottom' => get_string('bottom', 'mplayer')
+    );
 }
 
 /**
  * Define position of searchbar
  * @return array
  */
-function mplayer_list_logoposition() {
-    return array('bottom-left' => get_string('bottomleft', 'mplayer'),
-                 'bottom-right' => get_string('bottomright', 'mplayer'),
-                 'top-left' => get_string('topleft', 'mplayer'),
-                 'top-right' => get_string('topright', 'mplayer'));
+function mplayer_list_logoposition()
+{
+    return array(
+        'bottom-left' => get_string('bottomleft', 'mplayer'),
+        'bottom-right' => get_string('bottomright', 'mplayer'),
+        'top-left' => get_string('topleft', 'mplayer'),
+        'top-right' => get_string('topright', 'mplayer')
+    );
 }
 
 /**
@@ -945,35 +1034,38 @@ function mplayer_list_logoposition() {
  * I find alphabetical order works best ;)
  * @return array
  */
-function mplayer_list_skins() {
-    return array('' => '',
-                 'beelden/beelden.xml' => 'Beelden XML Skin',
-                 '3dpixelstyle.swf' => '3D Pixel Style',
-                 'atomicred.swf' => 'Atomic Red',
-                 'bekle.swf' => 'Bekle',
-                 'bluemetal.swf' => 'Blue Metal',
-                 'comet.swf' => 'Comet',
-                 'controlpanel.swf' => 'Control Panel',
-                 'dangdang.swf' => 'Dangdang',
-                 'fashion.swf' => 'Fashion',
-                 'festival.swf' => 'Festival',
-                 'grungetape.swf' => 'Grunge Tape',
-                 'icecreamsneaka.swf' => 'Ice Cream Sneaka',
-                 'kleur.swf' => 'Kleur',
-                 'magma.swf' => 'Magama',
-                 'metarby10.swf' => 'Metarby 10',
-                 'modieus.swf' => 'Modieus',
-                 'nacht.swf' => 'Nacht',
-                 'neon.swf' => 'Neon',
-                 'pearlized.swf' => 'Pearlized',
-                 'pixelize.swf' => 'Pixelize',
-                 'playcasso.swf' => 'Playcasso',
-                 'silverywhite.swf' => 'Silvery White',
-                 'simple.swf' => 'Simple',
-                 'snel.swf' => 'Snel',
-                 'stijl.swf' => 'Stijl',
-                 'stylish_slim.swf' => 'Stylish Slim',
-                 'traganja.swf' => 'Traganja');
+function mplayer_list_skins()
+{
+    return array(
+        '' => '',
+        'beelden/beelden.xml' => 'Beelden XML Skin',
+        '3dpixelstyle.swf' => '3D Pixel Style',
+        'atomicred.swf' => 'Atomic Red',
+        'bekle.swf' => 'Bekle',
+        'bluemetal.swf' => 'Blue Metal',
+        'comet.swf' => 'Comet',
+        'controlpanel.swf' => 'Control Panel',
+        'dangdang.swf' => 'Dangdang',
+        'fashion.swf' => 'Fashion',
+        'festival.swf' => 'Festival',
+        'grungetape.swf' => 'Grunge Tape',
+        'icecreamsneaka.swf' => 'Ice Cream Sneaka',
+        'kleur.swf' => 'Kleur',
+        'magma.swf' => 'Magama',
+        'metarby10.swf' => 'Metarby 10',
+        'modieus.swf' => 'Modieus',
+        'nacht.swf' => 'Nacht',
+        'neon.swf' => 'Neon',
+        'pearlized.swf' => 'Pearlized',
+        'pixelize.swf' => 'Pixelize',
+        'playcasso.swf' => 'Playcasso',
+        'silverywhite.swf' => 'Silvery White',
+        'simple.swf' => 'Simple',
+        'snel.swf' => 'Snel',
+        'stijl.swf' => 'Stijl',
+        'stylish_slim.swf' => 'Stylish Slim',
+        'traganja.swf' => 'Traganja'
+    );
 }
 
 /**
@@ -981,67 +1073,78 @@ function mplayer_list_skins() {
  * Longer buffer lengths can be given if a lot of users have particularly slow Internet connections
  * @return array
  */
-function mplayer_list_bufferlength() {
-    return array('0' => '0',
-                 '1' => '1',
-                 '2' => '2',
-                 '3' => '3',
-                 '4' => '4',
-                 '5' => '5',
-                 '6' => '6',
-                 '7' => '7',
-                 '8' => '8',
-                 '9' => '9',
-                 '10' => '10',
-                 '11' => '11',
-                 '12' => '12',
-                 '13' => '13',
-                 '14' => '14',
-                 '15' => '15',
-                 '16' => '16',
-                 '17' => '17',
-                 '18' => '18',
-                 '19' => '19',
-                 '20' => '20',
-                 '21' => '21',
-                 '22' => '22',
-                 '23' => '23',
-                 '24' => '24',
-                 '25' => '25',
-                 '26' => '26',
-                 '27' => '27',
-                 '28' => '28',
-                 '29' => '29',
-                 '30' => '30');
+function mplayer_list_bufferlength()
+{
+    return array(
+        '0' => '0',
+        '1' => '1',
+        '2' => '2',
+        '3' => '3',
+        '4' => '4',
+        '5' => '5',
+        '6' => '6',
+        '7' => '7',
+        '8' => '8',
+        '9' => '9',
+        '10' => '10',
+        '11' => '11',
+        '12' => '12',
+        '13' => '13',
+        '14' => '14',
+        '15' => '15',
+        '16' => '16',
+        '17' => '17',
+        '18' => '18',
+        '19' => '19',
+        '20' => '20',
+        '21' => '21',
+        '22' => '22',
+        '23' => '23',
+        '24' => '24',
+        '25' => '25',
+        '26' => '26',
+        '27' => '27',
+        '28' => '28',
+        '29' => '29',
+        '30' => '30'
+    );
 }
 
 /**
  * Define action when user clicks on video
  * @return array
  */
-function mplayer_list_displayclick() {
-    return array('play' => get_string('play', 'mplayer'),
-                 'link' => get_string('link', 'maplyer'),
-                 'fullscreen' => get_string('fullscreen', 'mplayer'),
-                 'none' => get_string('none', 'mplayer'),
-                 'mute' => get_strign('mute', 'mplayer'),
-                 'next' => get_string('next', 'mplayer'));
+function mplayer_list_displayclick()
+{
+    return array(
+        'play' => get_string('play', 'mplayer'),
+        'link' => get_string('link', 'maplyer'),
+        'fullscreen' => get_string('fullscreen', 'mplayer'),
+        'none' => get_string('none', 'mplayer'),
+        'mute' => get_strign('mute', 'mplayer'),
+        'next' => get_string('next', 'mplayer')
+    );
 }
 
 /**
  * Define playlist repeat behaviour
  * @return array
  */
-function mplayer_list_repeat($technology = 'flowplayer') {
+function mplayer_list_repeat($technology = 'flowplayer')
+{
 
     if ($technology == 'flowplayer') {
-        return array('no' => get_string('norepeat', 'mplayer'),
-                     'list' => get_string('list', 'mplayer'),
-                     'always' => get_string('always', 'mplayer'),
-                     'single' => get_string('single', 'mplayer'));
+        return array(
+            'no' => get_string('norepeat', 'mplayer'),
+            'list' => get_string('list', 'mplayer'),
+            'always' => get_string('always', 'mplayer'),
+            'single' => get_string('single', 'mplayer')
+        );
     } else {
-        return array('false' => get_string('norepeat', 'mplayer'),
-                     'true' => get_string('list', 'mplayer'));
+        return array(
+            'false' => get_string('norepeat', 'mplayer'),
+            'true' => get_string('list', 'mplayer')
+        );
     }
 }
 
@@ -1050,39 +1153,45 @@ function mplayer_list_repeat($technology = 'flowplayer') {
  * i.e. the way the video adjusts its dimensions to fit the FLV player window
  * @return array
  */
-function mplayer_list_stretching() {
-    return array('none' => get_string('none', 'mplayer'),
-                 'uniform' => get_string('uniform', 'mplayer'),
-                 'exactfit' => get_string('exactfit', 'mplayer'),
-                 'fill' => get_string('fill', 'mplayer'));
+function mplayer_list_stretching()
+{
+    return array(
+        'none' => get_string('none', 'mplayer'),
+        'uniform' => get_string('uniform', 'mplayer'),
+        'exactfit' => get_string('exactfit', 'mplayer'),
+        'fill' => get_string('fill', 'mplayer')
+    );
 }
 
 /**
  * Define default playback volume
  * @return array
  */
-function mplayer_list_volume() {
-    return array('0' => '0',
-                 '5' => '5',
-                 '10' => '10',
-                 '15' => '15',
-                 '20' => '20',
-                 '25' => '25',
-                 '30' => '30',
-                 '35' => '35',
-                 '40' => '40',
-                 '45' => '45',
-                 '50' => '50',
-                 '55' => '55',
-                 '60' => '60',
-                 '65' => '65',
-                 '70' => '70',
-                 '75' => '75',
-                 '80' => '80',
-                 '85' => '85',
-                 '90' => '90',
-                 '95' => '95',
-                 '100' => '100');
+function mplayer_list_volume()
+{
+    return array(
+        '0' => '0',
+        '5' => '5',
+        '10' => '10',
+        '15' => '15',
+        '20' => '20',
+        '25' => '25',
+        '30' => '30',
+        '35' => '35',
+        '40' => '40',
+        '45' => '45',
+        '50' => '50',
+        '55' => '55',
+        '60' => '60',
+        '65' => '65',
+        '70' => '70',
+        '75' => '75',
+        '80' => '80',
+        '85' => '85',
+        '90' => '90',
+        '95' => '95',
+        '100' => '100'
+    );
 }
 
 /**
@@ -1094,7 +1203,8 @@ function mplayer_list_volume() {
  * The filepath of the original video location in local storage is preserved.
  * @param object $mplayer
  */
-function mplayer_convert_storage_for_streamer($mplayer) {
+function mplayer_convert_storage_for_streamer($mplayer)
+{
 
     $config = get_config('mod_mplayer');
 
@@ -1122,7 +1232,7 @@ function mplayer_convert_storage_for_streamer($mplayer) {
                 $rec->filearea = 'mplayerfiles';
                 $rec->itemid = 0;
                 $rec->filepath = $storedfile->get_filepath();
-                $rec->filename = $originalname.'.stm';
+                $rec->filename = $originalname . '.stm';
 
                 $type = mplayer_flowplayer_get_type($mplayer, $originalname);
                 $stmcontent = $storage->get_manifest($storedfile, $type);
@@ -1151,7 +1261,9 @@ function mplayer_convert_storage_for_streamer($mplayer) {
  * @param objectref $mplayer the current player
  * @return string the source JS snippet
  */
-function mplayer_flowplayer_get_type(&$mplayer, $url) {
+function mplayer_flowplayer_get_type(&$mplayer, $url)
+{
+    var_dump($mplayer);
     if (empty($mplayer->streamer) || $mplayer->streamer == 'http') {
         // Non streamed sources.
         if (preg_match('/\.webm$/', $url)) {
@@ -1160,7 +1272,7 @@ function mplayer_flowplayer_get_type(&$mplayer, $url) {
             $type = 'video/mp4';
         }
     } else {
-        if (preg_match('/\.m3u8$/', $url)) {
+        if (preg_match('/\video/', $url)) {
             // HLS Support.
             $type = 'application/x-mpegurl';
         } else if (preg_match('/\/vod\/smil\:/', $url)) {
@@ -1197,7 +1309,8 @@ function mplayer_flowplayer_get_type(&$mplayer, $url) {
  *    - 1 : thumb file for clip 1
  * etc.
  */
-function mplayer_init_storage($cm, $draftitemid = 0) {
+function mplayer_init_storage($cm, $draftitemid = 0)
+{
     global $USER;
 
     $fs = get_file_storage();
@@ -1233,7 +1346,8 @@ function mplayer_init_storage($cm, $draftitemid = 0) {
  * converts the old mplayer storage architecture to new storage
  * organisation. Use for upgrade passing over 2015110100 version.
  */
-function mplayer_upgrade_storage($mplayer) {
+function mplayer_upgrade_storage($mplayer)
+{
 
     $fs = get_file_storage();
 
@@ -1265,7 +1379,7 @@ function mplayer_upgrade_storage($mplayer) {
                 }
             }
 
-            $newrec->filepath = '/medias/'.$ix.'/';
+            $newrec->filepath = '/medias/' . $ix . '/';
             $newrec->filename = $filename;
 
             // TODO (possibly) : If filename is numerically prefixed (clipped), move it to clip folder.
@@ -1292,7 +1406,7 @@ function mplayer_upgrade_storage($mplayer) {
                 $ix = 0;
             }
 
-            $newrec->filepath = '/thumbs/'.$ix.'/';
+            $newrec->filepath = '/thumbs/' . $ix . '/';
             $newrec->filename = $filename;
 
             $fs->create_file_from_storedfile($newrec, $storedfile);
@@ -1318,7 +1432,7 @@ function mplayer_upgrade_storage($mplayer) {
                 $ix = 0;
             }
 
-            $newrec->filepath = '/tracks/'.$ix.'/';
+            $newrec->filepath = '/tracks/' . $ix . '/';
             $newrec->filename = $filename;
 
             $fs->create_file_from_storedfile($newrec, $storedfile);
@@ -1363,18 +1477,21 @@ function mplayer_upgrade_storage($mplayer) {
     }
 }
 
-function mplayer_get_media_storage($storage) {
+function mplayer_get_media_storage($storage)
+{
     global $CFG;
 
-    $storageclass = $storage.'_storage';
-    require_once($CFG->dirroot.'/mod/mplayer/storage/'.$storageclass.'.class.php');
+    $storageclass = $storage . '_storage';
+    require_once($CFG->dirroot . '/mod/mplayer/storage/' . $storageclass . '.class.php');
     $storageobj = new $storageclass();
     return $storageobj;
 }
 
-function mplayer_get_packed_attributes() {
+function mplayer_get_packed_attributes()
+{
 
-    $attrs = ['configxml', 'author', 'mplayerdate',
+    $attrs = [
+        'configxml', 'author', 'mplayerdate',
         'infoboxcolor', 'infoboxposition', 'infoboxsize', 'duration',
         'hdbitrate', 'hdfile', 'hdfullscreen', 'hdstate', 'livestreamfile',
         'livestreamimage', 'livestreaminterval', 'livestreammessage', 'livestreamstreamer',
@@ -1388,12 +1505,14 @@ function mplayer_get_packed_attributes() {
         'plugins', 'streamer', 'tracecall', 'captionsback', 'captionsfile', 'captionsfontsize',
         'captionsstate', 'fpversion', 'metaviewerposition', 'metaviewersize', 'searchbarcolor',
         'searchbarlabel', 'searchbarposition', 'searchbarscript', 'snapshotbitmap', 'snapshotscript',
-        'splashmode', 'langselection'];
+        'splashmode', 'langselection'
+    ];
 
     return $attrs;
 }
 
-function mplayer_pack_attributes(&$mplayer) {
+function mplayer_pack_attributes(&$mplayer)
+{
 
     $attrs = mplayer_get_packed_attributes();
 
@@ -1410,7 +1529,8 @@ function mplayer_pack_attributes(&$mplayer) {
     return $mplayer->playerparams = json_encode($playerparams);
 }
 
-function mplayer_unpack_attributes(&$mplayer) {
+function mplayer_unpack_attributes(&$mplayer)
+{
 
     $attrs = mplayer_get_packed_attributes();
 
@@ -1427,7 +1547,8 @@ function mplayer_unpack_attributes(&$mplayer) {
     }
 }
 
-function mplayer_ffmpeg_info($filepath) {
+function mplayer_ffmpeg_info($filepath)
+{
 
     $config = get_config('mplayer');
 
@@ -1439,7 +1560,7 @@ function mplayer_ffmpeg_info($filepath) {
         throw new Exception("FFMpeg not executable. Check file permissions.");
     }
 
-    $cmd = '"'.$config->ffmpegpath."\" -i \"$filepath\" -hide_banner 2>&1";
+    $cmd = '"' . $config->ffmpegpath . "\" -i \"$filepath\" -hide_banner 2>&1";
     $ffmpeg = shell_exec($cmd);
     $search = "/Duration: (.*?)\./";
     preg_match($search, $ffmpeg, $matches);
@@ -1460,7 +1581,8 @@ function mplayer_ffmpeg_info($filepath) {
  * @param int $starttime start relative timestamp in seconds
  * @param int $endtime end relative timestamp in seconds
  */
-function mplayer_compute_segment_points($starttime, $endtime, $clip) {
+function mplayer_compute_segment_points($starttime, $endtime, $clip)
+{
 
     if (!isset($clip->duration)) {
         throw new \coding_exception("clip should have a duration or at least -1");
@@ -1478,14 +1600,16 @@ function mplayer_compute_segment_points($starttime, $endtime, $clip) {
     return $result;
 }
 
-function mplayer_save_attributes($mplayer) {
+function mplayer_save_attributes($mplayer)
+{
     global $DB;
 
     mplayer_pack_attributes($mplayer);
     $DB->update_record('mplayer', $mplayer);
 }
 
-function mplayer_parse_time($hms) {
+function mplayer_parse_time($hms)
+{
     $parts = explode(':', $hms);
     if (count($parts) == 1) {
         return $hms;
@@ -1496,7 +1620,8 @@ function mplayer_parse_time($hms) {
     }
 }
 
-function mplayer_format_time($secs) {
+function mplayer_format_time($secs)
+{
     $mins = floor($secs / 60);
     $secs = $secs - $mins * 60;
     $hours = floor($mins / 60);
@@ -1518,7 +1643,8 @@ function mplayer_format_time($secs) {
 /**
  * Get all highlight zones.
  */
-function mplayer_get_highlighted_zones_counter($mplayer, $clipid) {
+function mplayer_get_highlighted_zones_counter($mplayer, $clipid)
+{
     global $DB, $USER;
 
     $sql = "
@@ -1540,7 +1666,7 @@ function mplayer_get_highlighted_zones_counter($mplayer, $clipid) {
 
     $params = [$mplayer->id, $clipid, $USER->id];
     if ($zonecounters = $DB->get_record_sql($sql, $params)) {
-        return $zonecounters->foundzones.'/'.$zonecounters->allclipzones;
+        return $zonecounters->foundzones . '/' . $zonecounters->allclipzones;
     }
     return '';
 }
@@ -1548,7 +1674,8 @@ function mplayer_get_highlighted_zones_counter($mplayer, $clipid) {
 /**
  * Get all highlight zones.
  */
-function mplayer_get_highlighted_zones($mplayer, $clipix, $seeall = false) {
+function mplayer_get_highlighted_zones($mplayer, $clipix, $seeall = false)
+{
     global $DB, $USER;
 
     $cm = get_coursemodule_from_instance('mplayer', $mplayer->id);
@@ -1609,7 +1736,8 @@ function mplayer_get_highlighted_zones($mplayer, $clipix, $seeall = false) {
     return $highlightzones;
 }
 
-function mplayer_apply_namefilters(&$fullusers) {
+function mplayer_apply_namefilters(&$fullusers)
+{
     $firstnamefilter = optional_param('filterfirstname', false, PARAM_TEXT);
     $lastnamefilter = optional_param('filterlastname', false, PARAM_TEXT);
 
@@ -1619,7 +1747,7 @@ function mplayer_apply_namefilters(&$fullusers) {
 
     if ($firstnamefilter) {
         foreach ($fullusers as $userid => $user) {
-            if (!preg_match('/^'.$firstnamefilter.'/i', $user->firstname)) {
+            if (!preg_match('/^' . $firstnamefilter . '/i', $user->firstname)) {
                 unset($fullusers[$userid]);
             }
         }
@@ -1627,7 +1755,7 @@ function mplayer_apply_namefilters(&$fullusers) {
 
     if ($lastnamefilter) {
         foreach ($fullusers as $userid => $user) {
-            if (!preg_match('/^'.$lastnamefilter.'/i', $user->lastname)) {
+            if (!preg_match('/^' . $lastnamefilter . '/i', $user->lastname)) {
                 unset($fullusers[$userid]);
             }
         }
