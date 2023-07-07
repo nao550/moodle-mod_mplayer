@@ -147,7 +147,7 @@ class mod_mplayer_renderer extends plugin_renderer_base
 
 
         $videojsbody = '<link href="https://vjs.zencdn.net/8.3.0/video-js.css" rel="stylesheet" />' . "\n";
-        $videojsbody .= '<video
+        $videojsbody .= '<center><video
         id="my-video"
         class="video-js"
         controls
@@ -157,7 +157,7 @@ class mod_mplayer_renderer extends plugin_renderer_base
         poster="MY_VIDEO_POSTER.jpg"';
         $videojsbody .= "data-setup='{ \"playbackRates\": [0.5, 1, 1.5, 2, 2.5, 3] }'>\n";
         $videojsbody .= '<source src="https://d2q74i6p64eakr.cloudfront.net/' . $mplayer->external;
-        $videojsbody .= '" type="application/x-mpegURL" /></video>';
+        $videojsbody .= '" type="application/x-mpegURL" /></video></center>';
         $videojsbody .= ' <script src="https://vjs.zencdn.net/8.3.0/video.min.js"></script>';
 
         return $videojsbody;
